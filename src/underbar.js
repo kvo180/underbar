@@ -305,6 +305,14 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var memo = {};
+    return function() {
+      var args = JSON.stringify(Array.from(arguments));
+      if (!memo.hasOwnProperty(args)) {
+        memo[args] = func.apply(this, arguments);
+      }
+      return memo[args];
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -314,6 +322,10 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args = Array.from(arguments).slice(2);
+    setTimeout(function() {
+      func.apply(this, args);
+    }, wait);
   };
 
 
@@ -328,6 +340,19 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var shuffledArray = array.slice();
+    var m = shuffledArray.length
+    var i;
+    var t;
+
+    while (m) {
+      i = Math.floor(Math.random() * m--);
+
+      t = shuffledArray[m];
+      shuffledArray[m] = shuffledArray[i];
+      shuffledArray[i] = t;
+    }
+    return shuffledArray;
   };
 
 
